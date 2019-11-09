@@ -5,7 +5,6 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
-import org.springframework.stereotype.Component;
 
 @Mapper
 public interface UserMapper {
@@ -16,6 +15,6 @@ public interface UserMapper {
     @Select("select * from user where name=#{username}")
     User getUserByName(@Param("username") String username);
 
-    @Insert("insert into user (name,encrypted_password,create_at) values (#{name},#{encryptedPassword},#{createAt})")
-    void save(User user);
+    @Insert("insert into user (name,encrypted_password,create_at) values (#{name},#{encryptedPassword},now())")
+    void save(@Param("name") String username, @Param("encryptedPassword") String password);
 }

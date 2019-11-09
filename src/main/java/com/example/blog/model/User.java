@@ -16,16 +16,16 @@ public class User {
     public User() {
     }
 
-    public User( String name, String encryptedPassword, String avatar) {
+    public User(String name, String encryptedPassword, String avatar) {
         this.name = name;
         this.encryptedPassword = encryptedPassword;
         this.avatar = avatar;
-        this.createAt=Instant.now();
-        this.updateAt=Instant.now();
+        this.createAt = Instant.now();
+        this.updateAt = Instant.now();
     }
 
     public User(String name, String encryptedPassword) {
-        this(name,encryptedPassword,null);
+        this(name, encryptedPassword, null);
     }
 
     public String getEncryptedPassword() {

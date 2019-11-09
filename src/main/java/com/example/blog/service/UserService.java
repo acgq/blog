@@ -20,9 +20,9 @@ public class UserService implements UserDetailsService {
     private Map<String, com.example.blog.model.User> users = new ConcurrentHashMap<>();
 
     @Inject
-    public UserService(BCryptPasswordEncoder cryptPasswordEncoder,UserMapper userMapper) {
+    public UserService(BCryptPasswordEncoder cryptPasswordEncoder, UserMapper userMapper) {
         this.cryptPasswordEncoder = cryptPasswordEncoder;
-        this.userMapper=userMapper;
+        this.userMapper = userMapper;
     }
 
 
@@ -32,24 +32,25 @@ public class UserService implements UserDetailsService {
 
     /**
      * 保存用户到数据库
-     * @param username
-     * @param password
+     *
+     * @param username 用户名
+     * @param password 密码
      */
     public void save(String username, String password) {
-        com.example.blog.model.User user = new com.example.blog.model.User( username, cryptPasswordEncoder.encode(password));
-        userMapper.save(user);
+        userMapper.save(username, cryptPasswordEncoder.encode(password));
     }
 
     /**
      * 加载用户信息
-     * @param username
+     *
+     * @param username 用户名
      * @return
      * @throws UsernameNotFoundException
      */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        com.example.blog.model.User user=userMapper.getUserByName(username);
-        if (user==null) {
+        com.example.blog.model.User user = userMapper.getUserByName(username);
+        if (user == null) {
             throw new UsernameNotFoundException(username + "用户名不存在");
         }
         String encodedPassword = user.getEncryptedPassword();
