@@ -1,5 +1,7 @@
 package com.example.blog.controller;
 
+import com.example.blog.mapper.UserMapper;
+import com.example.blog.model.Result;
 import com.example.blog.model.User;
 import com.example.blog.service.UserService;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -7,31 +9,38 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
+import javax.management.openmbean.KeyAlreadyExistsException;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 @RestController
 public class AuthController {
 
-    private UserDetailsService userDetailsService;
-
+    private UserService userService;
     private AuthenticationManager authenticationManager;
+    private UserMapper userMapper;
+    private Pattern pattern = Pattern.compile("[a-zA-Z_0-9\\u4e00-\\u9fa5]*");
 
     @Inject
-    public AuthController(UserService userDetailsService, AuthenticationManager authenticationManager) {
-        this.userDetailsService = userDetailsService;
+    public AuthController(UserService userService, AuthenticationManager authenticationManager, UserMapper userMapper) {
+        this.userService = userService;
         this.authenticationManager = authenticationManager;
+        this.userMapper = userMapper;
     }
-
 
     @GetMapping("/auth")
     @ResponseBody
     public Object auth() {
-        return new Result("ok", null, true);
+        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+        User loggedUser = userService.getUserByUsername(name);
+        if (loggedUser == null) {
+            return Result.fail(null);
+        }
+        return Result.success("", loggedUser);
     }
 
     @PostMapping("/auth/login")
@@ -42,53 +51,70 @@ public class AuthController {
         //验证用户
         UserDetails userDetails = null;
         try {
-            userDetails = userDetailsService.loadUserByUsername(username);
+            userDetails = userService.loadUserByUsername(username);
         } catch (UsernameNotFoundException e) {
-            return new Result("success", "用户不存在", false);
+            return Result.fail("用户不存在");
         }
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
         try {
             authenticationManager.authenticate(token);
+            //保存用户信息
             SecurityContextHolder.getContext().setAuthentication(token);
         } catch (AuthenticationException e) {
-            return new Result("success", "密码不正确", false);
+            return Result.fail("密码不正确");
         }
+        User user = userMapper.getUserByName(username);
 
-
-        return new Result("ok", "登陆成功", true, new User(1, "chen", ""));
+        return new Result("ok", "登陆成功", true, user);
     }
 
-    private static class Result {
-        private String status;
-        private String msg;
-        private boolean isLogin;
-        private Object data;
-
-        public Result(String status, String msg, boolean isLogin) {
-            this(status, msg, isLogin, null);
+    @PostMapping("/auth/register")
+    @ResponseBody
+    public Result register(@RequestBody Map<String, String> usernameAndPassword) {
+        String username = usernameAndPassword.get("username");
+        String password = usernameAndPassword.get("password");
+        //输入格式合法性判断
+        if (username == null || password == null) {
+            return Result.fail("用户名或密码为空");
         }
-
-        public Result(String status, String msg, boolean isLogin, Object object) {
-            this.status = status;
-            this.msg = msg;
-            this.isLogin = isLogin;
-            this.data = object;
+        if (!isUsernameValid(username)) {
+            return Result.fail("用户名不合法");
         }
-
-        public String getStatus() {
-            return status;
+        if (!isPasswordValid(password)) {
+            return Result.fail("密码不合法");
         }
-
-        public String getMsg() {
-            return msg;
-        }
-
-        public boolean getIsLogin() {
-            return isLogin;
-        }
-
-        public Object getData() {
-            return data;
+        User user = userService.getUserByUsername(username);
+        if (user == null) {
+            try {
+                userService.save(username, password);
+            } catch (KeyAlreadyExistsException e) {
+                return Result.fail("用户已存在");
+            }
+            User registeredUser = userService.getUserByUsername(username);
+            return Result.success("注册成功", registeredUser);
+        } else {
+            return Result.fail("用户已存在");
         }
     }
+
+    @GetMapping("/auth/logout")
+    @ResponseBody
+    public Result logout() {
+        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (name == null || name == "") {
+            return Result.fail("用户尚未登录");
+        }
+        SecurityContextHolder.clearContext();
+        return Result.fail("注销成功");
+    }
+
+    private boolean isPasswordValid(String password) {
+        return password.length() <= 16 & password.length() >= 6;
+    }
+
+    private boolean isUsernameValid(String username) {
+        return username.length() > 0 && username.length() < 16 && pattern.matcher(username).matches();
+    }
+
+
 }
