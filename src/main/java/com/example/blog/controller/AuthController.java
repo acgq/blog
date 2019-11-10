@@ -1,11 +1,11 @@
 package com.example.blog.controller;
 
-import com.example.blog.mapper.UserMapper;
 import com.example.blog.model.Result;
 import com.example.blog.model.User;
 import com.example.blog.service.UserService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,25 +22,23 @@ public class AuthController {
 
     private UserService userService;
     private AuthenticationManager authenticationManager;
-    private UserMapper userMapper;
     private Pattern pattern = Pattern.compile("[a-zA-Z_0-9\\u4e00-\\u9fa5]*");
 
     @Inject
-    public AuthController(UserService userService, AuthenticationManager authenticationManager, UserMapper userMapper) {
+    public AuthController(UserService userService, AuthenticationManager authenticationManager) {
         this.userService = userService;
         this.authenticationManager = authenticationManager;
-        this.userMapper = userMapper;
     }
 
-    @GetMapping("/auth")
+    @GetMapping(value = "/auth"/*,produces={"application/json; charset=UTF-8"}*/)
     @ResponseBody
     public Object auth() {
-        String name = SecurityContextHolder.getContext().getAuthentication().getName();
-        User loggedUser = userService.getUserByUsername(name);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User loggedUser = authentication == null ? null : userService.getUserByUsername(authentication.getName());
         if (loggedUser == null) {
-            return Result.fail(null);
+            return Result.fail("用户未登录");
         }
-        return Result.success("", loggedUser);
+        return Result.success("用户已登录", loggedUser);
     }
 
     @PostMapping("/auth/login")
@@ -63,9 +61,9 @@ public class AuthController {
         } catch (AuthenticationException e) {
             return Result.fail("密码不正确");
         }
-        User user = userMapper.getUserByName(username);
+        User user = userService.getUserByUsername(username);
 
-        return new Result("ok", "登陆成功", true, user);
+        return new Result("ok", "登录成功", true, user);
     }
 
     @PostMapping("/auth/register")
@@ -100,7 +98,8 @@ public class AuthController {
     @GetMapping("/auth/logout")
     @ResponseBody
     public Result logout() {
-        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String name = authentication == null ? null : authentication.getName();
         if (name == null || name == "") {
             return Result.fail("用户尚未登录");
         }

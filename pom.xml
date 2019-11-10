@@ -9,9 +9,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.example</groupId>
-    <artifactId>demo1</artifactId>
+    <artifactId>blog</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>demo1</name>
+    <name>blog</name>
     <description>Demo project for Spring Boot</description>
 
     <properties>
@@ -101,7 +101,7 @@
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>3.0.0</version>
                 <configuration>
-                    <configLocation>${basedir}/.circleci/checkstyle.xml</configLocation>
+                    <configLocation>${basedir}/checkstyle.xml</configLocation>
                     <includeTestSourceDirectory>true</includeTestSourceDirectory>
                     <enableRulesSummary>false</enableRulesSummary>
                 </configuration>
