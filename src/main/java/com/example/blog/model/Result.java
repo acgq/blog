@@ -1,28 +1,15 @@
 package com.example.blog.model;
 
-public class Result {
-    private String status;
-    private String msg;
-    private boolean isLogin;
-    private Object data;
+public abstract class Result<T> {
+    String status;
+    String msg;
+    T data;
 
-    public static Result fail(String msg) {
-        return new Result("fail", msg, false);
-    }
 
-    public static Result success(String msg, Object object) {
-        return new Result("success", msg, true, object);
-    }
-
-    private Result(String status, String msg, boolean isLogin) {
-        this(status, msg, isLogin, null);
-    }
-
-    public Result(String status, String msg, boolean isLogin, Object object) {
+    public Result(String status, String msg, T data) {
         this.status = status;
         this.msg = msg;
-        this.isLogin = isLogin;
-        this.data = object;
+        this.data = data;
     }
 
     public String getStatus() {
@@ -33,9 +20,6 @@ public class Result {
         return msg;
     }
 
-    public boolean getIsLogin() {
-        return isLogin;
-    }
 
     public Object getData() {
         return data;

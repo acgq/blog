@@ -1,6 +1,6 @@
 package com.example.blog.service;
 
-import com.example.blog.mapper.UserMapper;
+import com.example.blog.dao.UserMapper;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

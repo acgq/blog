@@ -1,5 +1,6 @@
 package com.example.blog.controller;
 
+import com.example.blog.model.LoginResult;
 import com.example.blog.model.Result;
 import com.example.blog.model.User;
 import com.example.blog.service.UserService;
@@ -36,9 +37,9 @@ public class AuthController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User loggedUser = authentication == null ? null : userService.getUserByUsername(authentication.getName());
         if (loggedUser == null) {
-            return Result.fail("用户未登录");
+            return LoginResult.fail("用户未登录");
         }
-        return Result.success("用户已登录", loggedUser);
+        return LoginResult.success("用户已登录", loggedUser);
     }
 
     @PostMapping("/auth/login")
@@ -51,7 +52,7 @@ public class AuthController {
         try {
             userDetails = userService.loadUserByUsername(username);
         } catch (UsernameNotFoundException e) {
-            return Result.fail("用户不存在");
+            return LoginResult.fail("用户不存在");
         }
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
         try {
@@ -59,11 +60,10 @@ public class AuthController {
             //保存用户信息
             SecurityContextHolder.getContext().setAuthentication(token);
         } catch (AuthenticationException e) {
-            return Result.fail("密码不正确");
+            return LoginResult.fail("密码不正确");
         }
         User user = userService.getUserByUsername(username);
-
-        return new Result("ok", "登录成功", true, user);
+        return LoginResult.success("登录成功", user);
     }
 
     @PostMapping("/auth/register")
@@ -73,25 +73,25 @@ public class AuthController {
         String password = usernameAndPassword.get("password");
         //输入格式合法性判断
         if (username == null || password == null) {
-            return Result.fail("用户名或密码为空");
+            return LoginResult.fail("用户名或密码为空");
         }
         if (!isUsernameValid(username)) {
-            return Result.fail("用户名不合法");
+            return LoginResult.fail("用户名不合法");
         }
         if (!isPasswordValid(password)) {
-            return Result.fail("密码不合法");
+            return LoginResult.fail("密码不合法");
         }
         User user = userService.getUserByUsername(username);
         if (user == null) {
             try {
                 userService.save(username, password);
             } catch (KeyAlreadyExistsException e) {
-                return Result.fail("用户已存在");
+                return LoginResult.fail("用户已存在");
             }
             User registeredUser = userService.getUserByUsername(username);
-            return Result.success("注册成功", registeredUser);
+            return LoginResult.success("注册成功", registeredUser);
         } else {
-            return Result.fail("用户已存在");
+            return LoginResult.fail("用户已存在");
         }
     }
 
@@ -101,10 +101,10 @@ public class AuthController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String name = authentication == null ? null : authentication.getName();
         if (name == null || name == "") {
-            return Result.fail("用户尚未登录");
+            return LoginResult.fail("用户尚未登录");
         }
         SecurityContextHolder.clearContext();
-        return Result.fail("注销成功");
+        return LoginResult.fail("注销成功");
     }
 
     private boolean isPasswordValid(String password) {

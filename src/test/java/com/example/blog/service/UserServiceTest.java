@@ -1,6 +1,6 @@
 package com.example.blog.service;
 
-import com.example.blog.mapper.UserMapper;
+import com.example.blog.dao.UserMapper;
 import com.example.blog.model.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
