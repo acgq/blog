@@ -22,4 +22,16 @@ public class BlogListResult extends Result<List<Blog>> {
     public static BlogListResult success(List<Blog> blogList, int total, int page, int totalPage) {
         return new BlogListResult("ok", "获取成功", blogList, total, page, totalPage);
     }
+
+    public int getTotal() {
+        return total;
+    }
+
+    public int getPage() {
+        return page;
+    }
+
+    public int getTotalPage() {
+        return totalPage;
+    }
 }

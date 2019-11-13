@@ -13,19 +13,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        //关闭csrf保护
-        http.csrf().disable();
         http
+                .csrf().disable()        //关闭csrf保护
                 .authorizeRequests()
-                .antMatchers("/", "/auth/**", "/static/**").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .formLogin()
-                .loginPage("/")
-                .permitAll()
-                .and()
-                .logout()
-                .permitAll();
+                .antMatchers("/", "/auth/**").permitAll();
     }
 
     @Bean

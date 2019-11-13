@@ -1,11 +1,13 @@
 package com.example.blog.controller;
 
+import com.example.blog.service.AuthService;
 import com.example.blog.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -37,10 +39,12 @@ class AuthControllerTest {
     private UserService userService;
     @Mock
     private AuthenticationManager authenticationManager;
+    @InjectMocks
+    private AuthService authService;
 
     @BeforeEach
     void setUp() {
-        mvc = MockMvcBuilders.standaloneSetup(new AuthController(userService, authenticationManager)).build();
+        mvc = MockMvcBuilders.standaloneSetup(new AuthController(userService, authenticationManager, authService)).build();
     }
 
 
@@ -94,6 +98,8 @@ class AuthControllerTest {
     @Test
     void register() throws Exception {
         Mockito.lenient().when(userService.getUserByUsername("myUser")).thenReturn(new com.example.blog.model.User("myUser", "password"));
+        Mockito.lenient().when(userService.loadUserByUsername("fakeUser")).thenReturn(new User("fakeUser", "password", Collections.emptyList()));
+
         Map<String, String> map = new HashMap<>();
         map.put("password", "password");
         map.put("username", "myUser");
@@ -104,5 +110,6 @@ class AuthControllerTest {
         postJson = new ObjectMapper().writeValueAsString(map);
         mvc.perform(post("/auth/register").contentType(MediaType.APPLICATION_JSON).content(postJson).content(postJson))
                 .andExpect(result -> Assertions.assertTrue(result.getResponse().getContentAsString(Charset.defaultCharset()).contains("注册成功")));
+        mvc.perform(get("/auth/logout"));
     }
 }

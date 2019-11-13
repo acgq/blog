@@ -19,6 +19,7 @@ public class UserService implements UserDetailsService {
     private UserMapper userMapper;
     private Map<String, com.example.blog.model.User> users = new ConcurrentHashMap<>();
 
+
     @Inject
     public UserService(BCryptPasswordEncoder cryptPasswordEncoder, UserMapper userMapper) {
         this.cryptPasswordEncoder = cryptPasswordEncoder;
@@ -35,9 +36,11 @@ public class UserService implements UserDetailsService {
      *
      * @param username 用户名
      * @param password 密码
+     * @param avatar 头像
      */
-    public void save(String username, String password) {
-        userMapper.save(username, cryptPasswordEncoder.encode(password));
+    public void save(String username, String password, String avatar) {
+
+        userMapper.save(username, cryptPasswordEncoder.encode(password), avatar);
     }
 
     /**

@@ -28,9 +28,9 @@ class UserServiceTest {
         //given:
         lenient().when(mockEncoder.encode("password")).thenReturn("myPassword");
         //when:
-        userService.save("user", "password");
+        userService.save("user", "password", null);
         //then:
-        verify(mockMapper).save("user", "myPassword");
+        verify(mockMapper).save("user", "myPassword", null);
     }
 
     @Test

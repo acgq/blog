@@ -6,7 +6,7 @@ import java.time.Instant;
 
 public class User {
     private int id;
-    private String name;
+    private String username;
     @JsonIgnore
     private String encryptedPassword;
     private String avatar;
@@ -16,28 +16,40 @@ public class User {
     public User() {
     }
 
-    public User(String name, String encryptedPassword, String avatar) {
-        this.name = name;
+    public User(String username, String encryptedPassword, String avatar) {
+        this.username = username;
         this.encryptedPassword = encryptedPassword;
-        this.avatar = avatar;
+        this.avatar = "https://blog-server.hunger-valley.com/avatar/69.jpg";
         this.createAt = Instant.now();
         this.updateAt = Instant.now();
     }
 
-    public User(String name, String encryptedPassword) {
-        this(name, encryptedPassword, null);
+    public User(String username, String encryptedPassword) {
+        this(username, encryptedPassword, null);
     }
 
     public String getEncryptedPassword() {
         return encryptedPassword;
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
+    public void setUpdateAt(Instant updateAt) {
+        this.updateAt = updateAt;
+    }
+
     public int getId() {
         return id;
     }
 
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return username;
     }
 
     public String getAvatar() {

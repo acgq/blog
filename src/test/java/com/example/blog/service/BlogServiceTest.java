@@ -18,7 +18,7 @@ class BlogServiceTest {
 
     @Test
     void getBiogs() {
-        blogService.getBlogs(1, 1);
-        Mockito.verify(blogDao).getBlogs(1, 1);
+        blogService.getBlog(1, 10, 1);
+        Mockito.verify(blogDao).selectBlog(1, 10, 1);
     }
 }
