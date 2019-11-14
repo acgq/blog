@@ -1,6 +1,11 @@
 package com.example.blog.integration;
 
 import com.example.blog.Demo1Application;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,11 +16,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.inject.Inject;
 import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpClient.Version;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = Demo1Application.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -33,14 +33,10 @@ public class MyIntegrationTest {
     public void notLoginByDefault() throws IOException, InterruptedException {
         String port = environment.getProperty("local.server.port");
         System.out.println("端口是" + port);
-        HttpClient client = HttpClient.newBuilder()
-                .version(Version.HTTP_1_1)
-                .build();
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:" + port + "/auth"))
-                .build();
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        Assertions.assertEquals(200, response.statusCode());
-        Assertions.assertTrue(response.body().contains("用户未登录"));
+        HttpClient client = HttpClients.createDefault();
+        HttpGet httpGet = new HttpGet("http://localhost:" + port + "/auth");
+        HttpResponse response = client.execute(httpGet);
+        Assertions.assertEquals(200, response.getStatusLine().getStatusCode());
+        Assertions.assertTrue(EntityUtils.toString(response.getEntity()).contains("用户未登录"));
     }
 }

@@ -49,7 +49,7 @@ public class BlogController {
         //验证用户
         Optional<User> currentUser = authService.getCurrentUser();
         try {
-            if (currentUser.isEmpty()) {
+            if (!currentUser.isPresent()) {
                 return BlogResult.fail("登录后才能操作");
             } else {
                 User user = currentUser.get();
