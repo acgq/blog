@@ -27,9 +27,9 @@ def normalCIBuild(String version) {
 
     stage('docker build')
 
-    sh("docker build . -t 140.82.8.249:5000/blog-springboot:${version}")
+    sh("docker build . -t 66.42.34.162 :5000/blog-springboot:${version}")
 
-    sh("docker push 140.82.8.249:5000/blog-springboot:${version}")
+    sh("docker push 66.42.34.162 :5000/blog-springboot:${version}")
 
     stage('deploy')
 
@@ -39,7 +39,7 @@ def normalCIBuild(String version) {
 }
 
 def deployVersion(String version) {
-    sh "ssh root@140.82.8.249 'docker rm -f blog && docker run --name blog -d -p 8080:8080 140.82.8.249:5000/blog-springboot:${version}'"
+    sh "ssh root@66.42.34.162  'docker rm -f blog && docker run --name blog -d -p 8080:8080 66.42.34.162 :5000/blog-springboot:${version}'"
 }
 
 def setScmPollStrategyAndBuildTypes(List buildTypes) {
@@ -51,7 +51,7 @@ def setScmPollStrategyAndBuildTypes(List buildTypes) {
 }
 
 def rollback() {
-    def dockerRegistryHost = "http://140.82.8.249:5000";
+    def dockerRegistryHost = "http://66.42.34.162 :5000";
     def getAllTagsUri = "/v2/blog-springboot/tags/list";
 
     def responseJson = new URL("${dockerRegistryHost}${getAllTagsUri}")
