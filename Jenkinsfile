@@ -10,7 +10,6 @@ String version = "${buildNumber}-${timestamp}-${projectName}";
 
 node {
     checkout scm;
-
     if(params.BuildType=='Rollback') {
         return rollback()
     } else if(params.BuildType=='Normal'){
@@ -22,7 +21,7 @@ node {
 
 def normalCIBuild(String version) {
     stage 'test & package'
-
+    sh('chmod a+x ./mvnw')
     sh('./mvnw clean package')
 
     stage('docker build')
