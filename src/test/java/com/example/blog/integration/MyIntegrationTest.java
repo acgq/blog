@@ -7,6 +7,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,17 +18,13 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import javax.inject.Inject;
 import java.io.IOException;
 
+@Disabled
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = Demo1Application.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(locations = "classpath:test.properties")
 public class MyIntegrationTest {
     @Inject
     Environment environment;
-
-    @Test
-    public void integrationTest() {
-
-    }
 
     @Test
     public void notLoginByDefault() throws IOException, InterruptedException {
