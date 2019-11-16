@@ -26,9 +26,9 @@ def normalCIBuild(String version) {
 
     stage('docker build')
 
-    sh("docker build . -t 66.42.34.162 :5000/blog-springboot:${version}")
+    sh("docker build . -t 66.42.34.162:5000/blog-springboot:${version}")
 
-    sh("docker push 66.42.34.162 :5000/blog-springboot:${version}")
+    sh("docker push 66.42.34.162:5000/blog-springboot:${version}")
 
     stage('deploy')
 
