@@ -135,22 +135,6 @@
                     <user>root</user>
                     <password>123456</password>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>test-database-setup</id>
-                        <phase>pre-integration-test</phase>
-                        <goals>
-                            <goal>migrate</goal>
-                        </goals>
-                        <configuration>
-                            <url>
-                                jdbc:mysql://localhost:3307/blog?useUnicode=true&amp;characterEncoding=UTF-8&amp;useSSL=false
-                            </url>
-                            <user>root</user>
-                            <password>123456</password>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
