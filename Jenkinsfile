@@ -38,7 +38,7 @@ def normalCIBuild(String version) {
 }
 
 def deployVersion(String version) {
-    sh "ssh root@66.42.34.162  'docker rm -f blog && docker run --name blog -d -p 8080:8080 66.42.34.162:5000/blog-springboot:${version}'"
+    sh "ssh root@66.42.34.162  'docker rm -f blog && docker run --name blog -d -p 8080:8080 --link mysql:mysql 66.42.34.162:5000/blog-springboot:${version}'"
 }
 
 def setScmPollStrategyAndBuildTypes(List buildTypes) {
