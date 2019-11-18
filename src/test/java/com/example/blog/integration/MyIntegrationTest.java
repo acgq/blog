@@ -1,6 +1,6 @@
 package com.example.blog.integration;
 
-import com.example.blog.Demo1Application;
+import com.example.blog.Application;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -20,7 +20,7 @@ import java.io.IOException;
 
 @Disabled
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = Demo1Application.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(locations = "classpath:test.properties")
 public class MyIntegrationTest {
     @Inject
